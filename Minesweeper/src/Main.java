@@ -1,0 +1,53 @@
+import java.util.Scanner;
+
+public class Main {
+	static Scanner sc = new Scanner(System.in);
+	static MineBoard mineBoard;
+	public static void main(String[] args) {
+		new MineSweeper(7);
+//		System.out.print("Size: ");
+//		mineBoard = new MineBoard(sc.nextInt());
+//		
+//		while(!mineBoard.gameOver)
+//		{
+//			turn();
+//		}
+	}
+	public static void turn()
+	{
+		int row;
+		int collumn;
+		boolean flag;
+		
+		clearScreen();
+		System.out.println("Turn " + mineBoard.turnNum);
+		mineBoard.printBoard('v');
+		//mineBoard.printBoard('s');
+		System.out.print("Row: ");
+		row = sc.nextInt();
+		System.out.print("Collumn: ");
+		collumn = sc.nextInt();
+		System.out.print("Guess(1) or Flag(2):");
+		switch(sc.nextInt()) {
+		case 1:
+			flag = false;
+			break;
+		case 2:
+			flag = true;
+			break;
+		default:
+			System.out.println("Invalid option entered. Default is guess");
+			flag = false;
+			break;
+		}
+		
+		mineBoard.guess(row-1, collumn-1, flag);
+	}
+	
+	
+	public static void clearScreen()
+	{
+		System.out.print("\033[H\033[2J");
+		System.out.flush();  
+	}
+}
