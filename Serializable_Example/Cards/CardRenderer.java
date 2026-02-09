@@ -1,10 +1,10 @@
 package Cards;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
 
 public class CardRenderer extends JPanel {
     private static final int WIDTH = 1200, HEIGHT = 700;
@@ -16,7 +16,7 @@ public class CardRenderer extends JPanel {
     private List<Card> draggedCards = null;
     private Point mouseOffset = new Point(0, 0);
     private Rectangle tableauBounds = new Rectangle(100, 50, 700, 600);
-    private Rectangle stockBounds = new Rectangle(0, 50, 100, 100);
+    private Rectangle stockBounds = new Rectangle(0, 50, 100, 140);
     private Rectangle foundationBounds = new Rectangle(800, 50, 100, 560);
 
     private static Deck deck;
@@ -45,7 +45,7 @@ public class CardRenderer extends JPanel {
         }
 
         int i = 0;
-        for (Foundation.Suit s : Foundation.Suit.values()) {
+        for (Suit s : Suit.values()) {
             foundations.add(new Foundation(140, 50 + (i * 140), s)); 
             System.out.println(foundations.get(i).getY());
             i++;
@@ -121,6 +121,8 @@ public class CardRenderer extends JPanel {
 
         else if (foundationBounds.contains(e.getPoint())) {
             System.out.println("pressedFoundation");
+
+            
         }
     }
 
@@ -144,15 +146,17 @@ public class CardRenderer extends JPanel {
     }
 
     private void handleMouseReleased(MouseEvent e) {
-        System.out.println(e.getPoint());
+        Point pointCapture = e.getPoint();
+        System.out.println(pointCapture);
 
         int nearestX;
         Tableau currTab;
         List<Card> cardsToRemove;
 
         if (draggedCard != null) {
-            if (isValidDrop(e.getPoint())) {
-                if (tableauBounds.contains(e.getPoint())) {          
+            if (isValidDrop(pointCapture)) {
+
+                if (tableauBounds.contains(pointCapture)) {          
                     nearestX = ((int) e.getPoint().getX()) / 100;
 
                     tableaus.get(nearestX - 1).addCard(deck.getCards().get(deck.getCards().indexOf(draggedCard)));
@@ -167,29 +171,30 @@ public class CardRenderer extends JPanel {
                     }
                 }
 
-                else if (foundationBounds.contains(e.getPoint())) {
-                    int nearestY = (((int) e.getPoint().getY()) - 50) / 140;
-                    System.out.println(nearestY);
+                else if (foundationBounds.contains(pointCapture)) {
+                    int nearestY = ((((int) pointCapture.getY()) - 50) / 140) + 1;
+                    System.out.printf("Nearest Y hierarchy %d\n", nearestY);
 
-                    if(stock.contains(draggedCard)) { // if the card is in a tabelau
+                    if(stock.contains(draggedCard)){// if the card is in a tablau
                         currTab = tableaus.get(draggedCard.getLocation());
 
                         cardsToRemove = new ArrayList<>();
 
                         currTab.reveal();
                         foundations.get(nearestY - 1).addCard(draggedCard);
-                        System.out.println(foundations.get(nearestY).getSuit() + " arr " + foundations.get(nearestY - 1) + "\n");
-                        System.out.println(foundations.get(nearestY -1 ).getCards().get(0).getSuit());
+                        //System.out.println(foundations.get(nearestY).getSuit() + " arr " + foundations.get(nearestY - 1) + "\n");
+                        //System.out.println(foundations.get(nearestY -1 ).getCards().get(0).getSuit());
 
                         cardsToRemove.add(draggedCard);
                         draggedCard.setZ(runningZ);
                         runningZ++;
                         stock.remove(draggedCard);
 
+
                         for (Card c : cardsToRemove) {
                             currTab.getCards().remove(c);
                         }
-                    }
+                  }
                     else {
                         foundations.get(nearestY - 1).addCard(draggedCard);
                         System.out.println(foundations.get(nearestY -1 ).getSuit() + " righty " + foundations.get(nearestY - 1) + "\n");
@@ -215,11 +220,11 @@ public class CardRenderer extends JPanel {
         else if (draggedCards != null) {
             prevX = draggedCards.get(0).getX();
             prevY = draggedCards.get(0).getY();
-            if (isValidDrop(e.getPoint())) {
+            if (isValidDrop(pointCapture)) {
 
                 System.out.println("Card dropped at: " + e.getPoint());
 
-                nearestX = ((int) e.getPoint().getX()) / 100;
+                nearestX = ((int) pointCapture.getX()) / 100;
                 currTab = tableaus.get(draggedCards.get(1).getLocation());
                 cardsToRemove = new ArrayList<>();
                 for (Card c : draggedCards) {
@@ -291,25 +296,34 @@ public class CardRenderer extends JPanel {
                 }
             }
             else if(foundationBounds.contains(dropPoint)) {
-                System.out.println("yippe");
-                if (foundations.get(nearestY - 1).getCards().size() > 0 ) {
-                    Card currCard = foundations.get(nearestY + 1).getCards().getLast();    
+                System.out.println("within foundation bounds");
+                Foundation foundation = foundations.get(nearestY);
+                if (foundations.get(nearestY).getCards().size() > 0 ) {
+                    Card currCard = foundation.getCards().getLast();    
                     if (draggedCard != null) {
                         if (draggedCard.getRank().getFoundationValue() - currCard.getRank().getFoundationValue() == 1 
-                        && !currCard.getSuit().toString().equals(draggedCard.getSuit().toString())) {
+                            && !currCard.getSuit().toString().equals(draggedCard.getSuit().toString())) {
                             validPlay = true;
                         }
                     }
                 }
                 else {
                     if (draggedCard != null) {
-                        if (draggedCard.getRank().toString().equals("ACE")){
+                        if (draggedCard.getRank().toString().equals("ACE") 
+                            && draggedCard.getSuit() == foundation.getSuit()){
                             validPlay = true;
                         }
                     }
                 }
             }
         return validPlay; 
+    }
+
+    private Tableau getTableauOfCard(Card card) {
+        for (Tableau t : tableaus) {
+            if (t.getCards().contains(card)) return t;
+        }
+        return new Tableau();
     }
 
     private Rectangle getCardBounds(Card card) {

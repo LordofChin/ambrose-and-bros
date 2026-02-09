@@ -10,14 +10,14 @@ public class Pile {
     // Default constructor
     public Pile() {
         this.cards = new ArrayList<>();
-        this.x = 50;
-        this.y = 0;
+        this.x = 0;
+        this.y = 50;
     }
 
     public Pile(ArrayList<Card> cards) {
         this.cards = cards;
-        this.x = 50;
-        this.y = 0;
+        this.x = 0;
+        this.y = 50;
     }
 
     public Pile(ArrayList<Card> cards, int x, int y) {
@@ -29,7 +29,7 @@ public class Pile {
     public Pile(ArrayList<Card> cards, int x) {
         this.cards = cards;
         this.x = x;
-        this.y = 0;
+        this.y = 50;
     }
 
     public Pile(int x, int y) {
@@ -41,7 +41,7 @@ public class Pile {
     public Pile(int x) {
         this.cards = new ArrayList<>();
         this.x = x;
-        this.y = 0;
+        this.y = 50;
     }
 
     public void setCards(ArrayList<Card> cards) {

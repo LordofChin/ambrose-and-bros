@@ -7,7 +7,7 @@ public class Deck extends Pile {
 
     public Deck() {
         super(); 
-        for (Card.Suit suit : Card.Suit.values()) {
+        for (Suit suit : Suit.values()) {
             for (Card.Rank rank : Card.Rank.values()) {
                 cards.add(new Card(suit, rank, 100)); 
             }

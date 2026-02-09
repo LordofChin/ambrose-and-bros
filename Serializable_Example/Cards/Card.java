@@ -1,7 +1,5 @@
 package Cards;
 
-import java.awt.Color;
-
 public class Card {
     private double width;
     private double height;
@@ -11,23 +9,6 @@ public class Card {
     private double x, y;
     private int z;
     private int location;
-
-    public enum Suit {  
-        HEARTS(Color.RED), 
-        CLUBS(Color.BLACK), 
-        DIAMONDS(Color.RED), 
-        SPADES(Color.BLACK);
-
-        private Color color;
-
-        Suit(Color color) {
-            this.color = color;
-        }
-        
-        public Color getColor() {
-            return color;
-        }
-    }
 
     // Enum for ranks (2-10, J, Q, K, A)
     public enum Rank {
